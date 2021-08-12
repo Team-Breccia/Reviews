@@ -15,12 +15,26 @@ app.get('/', (req, res) => {
   res.send('Hello Hello')
 })
 
-app.get('/reviews/:product_id', (req, res) => {
-  const id = parseInt(req.params.product_id)
-  let queryString = `SELECT * FROM reviews where id=${id}`;
+app.get('/reviews', (req, res) => {
+  console.log(req.query)
+  let page = req.query.page || 1;
+  let count = req.query.count || 5;
+  let sort = req.query.sort || 'newest';
+  if (sort === 'newest') {
+    sort = 'order by date'
+  }
+  if (sort === 'helpful') {
+    sort = 'order by helpfulness'
+  }
+  if (sort === 'relevant') {
+    sort = 'order by ???'
+  }
+
+  const id = parseInt(req.query.product_id)
+  let queryString = `SELECT * FROM reviews where product_id=${id}`;
   pool.query(queryString, (err, data) => {
-    console.log(data.rows[0])
-    res.send(data.rows[0])
+    console.log(data.rows)
+    res.send(data.rows)
   })
 })
 
