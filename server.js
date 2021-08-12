@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const pool = require('./database/index.js')
+
+
 
 app.use(express.json())
 app.use(express.static(path.join(__dirname, '.')))
@@ -13,14 +16,14 @@ app.get('/', (req, res) => {
 })
 
 app.get('/reviews/:product_id', (req, res) => {
-  console.log(req.params.product_id)
-  console.log('reviews/1 get request')
-  res.send(req.params.product_id)
+  const id = parseInt(req.params.product_id)
+  let queryString = `SELECT * FROM reviews where id=${id}`;
+  pool.query(queryString, (err, data) => {
+    console.log(data.rows[0])
+    res.send(data.rows[0])
+  })
 })
 
-app.get('/reviews/:product_id/:page?/:count?/:sort', (req, res) => {
-  console.log(req.params)
-})
 
 
 
