@@ -29,6 +29,7 @@ app.get('/reviews', (req, res) => {
   if (sort === 'relevant') {
     sort = 'order by ???'
   }
+  console.log(sort)
 
   const id = parseInt(req.query.product_id)
   let queryString = `SELECT * FROM reviews where product_id=${id}`;
