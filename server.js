@@ -30,9 +30,9 @@ app.get('/reviews', (req, res) => {
   }
 
   const id = parseInt(req.query.product_id)
-  let queryString = `select reviews.id, product_id, rating, date, summary, body, recommend, reviewer_name, helpfulness,
+  let queryString = `select reviews.id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness,
     array_agg(json_build_object('id', reviews_photos.id, 'url', reviews_photos.url)) as photos FROM reviews
-    inner join reviews_photos on reviews.id = review_id
+    left join reviews_photos on reviews.id = review_id
   where product_id=${id}
   group by reviews.id
   ${sort}
@@ -53,10 +53,18 @@ app.get('/reviews', (req, res) => {
   })
 })
 
-/*
-array_agg(jsonb_build_object('id', reviews_photos.id, 'url', reviews_photos.url)) as photos FROM reviews left join reviews_photos on reviews.id = review_id
-*/
+app.get('/reviews/meta', (req, res) => {
 
+  const id = parseInt(req.query.product_id)
+  let queryString = `select rating from reviews where product_id=${id}`
+  pool.query(queryString, (err, data) => {
+    console.log(data)
+
+
+    res.send(data)
+  })
+
+})
 
 
 
