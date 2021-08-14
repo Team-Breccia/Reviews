@@ -16,7 +16,6 @@ app.get('/', (req, res) => {
 })
 
 app.get('/reviews', (req, res) => {
-  console.log(req.query)
   let page = req.query.page || 1;
   let count = req.query.count || 5;
   let sort = req.query.sort || 'newest';
@@ -31,16 +30,32 @@ app.get('/reviews', (req, res) => {
   }
 
   const id = parseInt(req.query.product_id)
-  let queryString = `select id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, helpfulness,
-    (select array_to_json(array_agg(reviews_photos))) from (select reivews.photos.id, url from reviews_photos left join reviews on reviews.id = review_id)
-
-  from reviews where product_id=${id} ${sort} limit ${count} offset ${count * page - count}`;
+  let queryString = `select reviews.id, product_id, rating, date, summary, body, recommend, reviewer_name, helpfulness,
+    array_agg(json_build_object('id', reviews_photos.id, 'url', reviews_photos.url)) as photos FROM reviews
+    inner join reviews_photos on reviews.id = review_id
+  where product_id=${id}
+  group by reviews.id
+  ${sort}
+  limit ${count}
+  offset ${count * page - count}`;
   pool.query(queryString, (err, data) => {
-    console.log(data.rows)
-    res.send(data.rows)
+    if (err) {
+      console.log(err)
+    }
+    let resultObj = {
+      "product": JSON.stringify(id),
+      "page": page,
+      "count": count,
+      "results": data.rows
+    }
+    console.log(resultObj)
+    res.send(resultObj)
   })
 })
 
+/*
+array_agg(jsonb_build_object('id', reviews_photos.id, 'url', reviews_photos.url)) as photos FROM reviews left join reviews_photos on reviews.id = review_id
+*/
 
 
 
