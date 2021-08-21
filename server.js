@@ -65,7 +65,7 @@ app.get('/reviews/meta', (req, res) => {
 
 
   const characteristicsQuery = `select name, id,
-  (select avg(value) from characteristics_reviews where characteristic_id = characteristics.id) as average from characteristics where product_id = ${product_id}`;
+  (select avg(value) from characteristics_reviews where characteristics_id = characteristics.id) as average from characteristics where product_id = ${product_id}`;
 
   const recommendQuery = `select count(recommend) as true, (select count(recommend) as false from reviews where product_id = ${product_id} and recommend = false) from reviews where product_id = ${product_id} and recommend = true`;
 
