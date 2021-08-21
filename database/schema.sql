@@ -6,6 +6,10 @@ drop table if exists characteristics;
 
 drop table if exists characteristics_reviews;
 
+CREATE DATABASE reviewsdata;
+
+\c reviewsdata;
+
 CREATE TABLE reviews (
   id SERIAL PRIMARY KEY,
   product_id int,
@@ -40,9 +44,9 @@ CREATE TABLE characteristics_reviews (
   value int
 );
 
-/*
 
-psql junelee -h localhost -d reviewsdata -f /Users/junelee/Reviews/database/schema.sql
+
+psql junelee -h 52.15.61.59 -d reviewsdata -f /Users/junelee/Reviews/database/schema.sql
 copy reviews from '/Users/junelee/reviews.csv' with delimiter ',' csv header;
 copy characteristics from '/Users/junelee/characteristics.csv' with delimiter ',' csv header;
 copy characteristics_reviews from '/Users/junelee/characteristic_reviews.csv' with delimiter ',' csv header;
@@ -58,6 +62,3 @@ ALTER TABLE reviews
   SELECT setval('characteristics_id_seq', (select max(id) from characteristics));
   SELECT setval('characteristics_reviews_id_seq', (select max(id) from characteristics_reviews));
 
-
-
-*/
